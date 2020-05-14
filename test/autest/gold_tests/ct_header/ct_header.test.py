@@ -12,6 +12,7 @@ Verify txn_box can filter fields as expected.
 '''
 
 ts = Test.MakeATSProcess("ts")
+dns = Test.MakeDNServer("dns")
 
 #
 # Test 1: Verify that a field can be changed in both upstream and downstream
@@ -21,4 +22,4 @@ client = r.AddVerifierClientProcess(
     "client1", ts, "ct_header.replay.yaml",
     http_ports=[ts.Variables.port])
 server = r.AddVerifierServerProcess("server1", "ct_header.replay.yaml")
-r.ConfigureTsForTxnBox(ts, server, "ct_header.replay.yaml")
+r.ConfigureTsForTxnBox(ts, server, dns, "ct_header.replay.yaml")

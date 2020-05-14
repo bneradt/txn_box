@@ -10,7 +10,7 @@ Implement txn_box extensions for Traffic Server.
 import os.path
 
 
-def ConfigureTsForTxnBox(run, ts, server, txn_box_config=None, txn_box_key='meta.txn_box'):
+def ConfigureTsForTxnBox(run, ts, server, dns, txn_box_config=None, txn_box_key='meta.txn_box'):
     """
     Set the Default process of the test run to a replay-client Process.
 
@@ -20,6 +20,8 @@ def ConfigureTsForTxnBox(run, ts, server, txn_box_config=None, txn_box_key='meta
         ts: (Process) The Traffic Server process being configured for txn_box.
 
         server: (Process) The server that Traffic Server proxies to.
+
+        dns: (Process) A MicroDNS process.
 
         txn_box_config: (str) The txn_box yaml configuration file. This becomes
             the --config argument to txn_box.
@@ -45,6 +47,13 @@ def ConfigureTsForTxnBox(run, ts, server, txn_box_config=None, txn_box_key='meta
     if txn_box_key:
         txn_box_command += ' --key {}'.format(txn_box_key)
     ts.Disk.plugin_config.AddLine(txn_box_command)
+
+    # Configure Traffic Server to use the DNS process.
+    dns.addRecords(records={"*": ["127.0.0.1"]})
+    ts.Disk.records_config.update({
+         'proxy.config.dns.nameservers': '127.0.0.1:{0}'.format(dns.Variables.Port),
+         'proxy.config.dns.resolv_conf': 'NULL',
+         })
 
     ts.Disk.remap_config.AddLine('map / http://127.0.0.1:{0}'.format(server.Variables.http_port))
 
