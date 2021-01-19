@@ -21,8 +21,8 @@ tr = Test.TxnBoxTestAndRun("Multi bucketing 3", "multi-ramp.replay.yaml"
                                      ['http://base.ex/', 'http://base.ex/', [ CFG_PATH ] ]
                                    , ['https://base.ex/', 'https://base.ex/', [ CFG_PATH ] ]
                                    ]
-                           , verifier_client_args="--verbose info --repeat {}".format(RepeatCount)
-                           , verifier_server_args="--verbose info --format \"{{url}}\""
+                           , verifier_client_args=(r'--verbose info --format "{url}" --repeat ' + str(RepeatCount))
+                           , verifier_server_args=r'--verbose info --format "{url}"'
                            , enable_tls=True
                            )
 
